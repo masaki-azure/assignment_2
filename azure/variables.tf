@@ -7,7 +7,7 @@ variable "project" {
 locals {
   # storage account 名は小文字英数字のみ・24文字以内という Azure の制約があるため、
   # project の表示用の値（大文字・ハイフン可）とは別に、名前生成専用の値を作る。
-  storage_safe_project = lower(replace(var.project, "/[^a-z0-9]/", ""))
+  storage_safe_project = replace(lower(var.project, "/[^a-z0-9]/", ""))
 }
 
 variable "env" {
