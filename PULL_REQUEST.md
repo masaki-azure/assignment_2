@@ -4,7 +4,7 @@
 セキュリティリスクの排除、可用性向上、およびコード品質担保のため、以下の修正を行いました。
 
 1. **ネットワークの閉域化**
-   - Storage Account：パブリックアクセスを無効化し、Private Endpoint経由での接続に変更。
+   - Storage Account：パブリックアクセスを無効化し、Private Endpoint経由での接続に変更。また、脆弱性のある古いプロトコルを無効化するため、最低TLSバージョンを`1.2 (min_tls_version = "TLS1_2") `に強制。
    - PostgreSQL：パブリックアクセスを無効化し、VNet統合（インジェクション）を適用。Private DNS Zoneを追加。
    - PostgreSQLの全開放FWルール（`0.0.0.0/0`）を削除。
 2. **App Serviceの可用性改善**
@@ -15,6 +15,7 @@
 4. **CIパイプライン（GitHub Actions）の強化**
    - `ci.yml` に Quality Gate を実装。従来の `fmt` に加え、`validate`、`tflint`（Lintチェック）、`tfsec`（セキュリティスキャン）の実行ステップを追加。
    - `versions.tf` にてプロバイダーのバージョンを固定し、将来の破壊的変更による事故を防止
+   - プロバイダー設定に `storage_use_azuread = true` を追加し、よりセキュアなAzure AD認証ベースの構成へ改善。
 
 ## Why：なぜ必要か（事故防止／運用／保守の観点）
 - **事故防止（セキュリティ）**: 
