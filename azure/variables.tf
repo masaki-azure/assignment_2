@@ -30,10 +30,10 @@ variable "tags" {
   }
 }
 
-# 3. 機密情報の保護（ハードコードの排除）
+# 3. 機密情報の保護（ハードコードの排除） postgres_admin_user,postgres_admin_password
 # - `variables.tf` のデフォルト値から推測しやすいパスワードや機密情報のハードコードを削除。
-# - Key Vault 等の外部参照、または環境変数（TF_VAR）による安全な注入方式へ変更。
-# （※ sensitive = true を設定し、実行時に TF_VAR_postgres_admin_user として受け取る構成に修正）
+# TODO: App Service の app_settings に渡る DB パスワードを、Key Vault 参照に切り替える
+#   （現状は sensitive = true による出力マスクのみで、構成画面には平文で残る）
 variable "postgres_admin_user" {
   description = "PostgreSQL Administrator Username"
   type        = string
