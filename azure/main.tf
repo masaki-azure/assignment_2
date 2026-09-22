@@ -83,6 +83,7 @@ resource "azurerm_storage_account" "st" {
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  min_tls_version          = "TLS1_2"
 
   # 1. ネットワーク・セキュリティの強化: ストレージアカウントのパブリックネットワークアクセスを無効化（または制限）。
   public_network_access_enabled = false
