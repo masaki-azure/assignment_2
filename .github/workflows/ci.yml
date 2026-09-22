@@ -1,4 +1,4 @@
-name: terraform-ci
+name: Terraform CI (quality gate)
 
 on:
   pull_request:
@@ -7,10 +7,38 @@ on:
   workflow_dispatch:
 
 jobs:
-  terraform:
+  quality-gate:
+    name: quality-gate
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.5"
+
       - name: terraform fmt
         run: terraform fmt -check -recursive
+
+      - name: terraform init
+        run: terraform init -backend=false
+
+      - name: terraform validate
+        run: terraform validate
+
+      - name: Setup tflint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: tflint init
+        run: tflint --init
+
+      - name: tflint
+        run: tflint --recursive
+
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          working_directory: azure 
