@@ -1,49 +1,64 @@
 variable "project" {
-  default = "Health-App"
+  description = "Project name"
+  type        = string
+  default     = "Health-App"
 }
 
 variable "env" {
-  default = "stg"
+  description = "Environment name"
+  type        = string
+  default     = "stg"
 }
 
 variable "location" {
-  default = "japaneast"
+  description = "Azure region"
+  type        = string
+  default     = "japaneast"
 }
 
 variable "tags" {
+  description = "Common tags for resources"
+  type        = map(string)
   default = {
-    owner = "unknown"
+    owner = "infrastructure-team"
   }
 }
 
+# 3. 機密情報の保護（ハードコードの排除）
+# - `variables.tf` のデフォルト値から推測しやすいパスワードや機密情報のハードコードを削除。
+# - Key Vault 等の外部参照、または環境変数（TF_VAR）による安全な注入方式へ変更。
+# （※ sensitive = true を設定し、実行時に TF_VAR_postgres_admin_user として受け取る構成に修正）
 variable "postgres_admin_user" {
-  default = "pgadmin"
+  description = "PostgreSQL Administrator Username"
+  type        = string
+  sensitive   = true
 }
 
 variable "postgres_admin_password" {
-  default = "Password1234!"
-}
-
-variable "pg_firewall_rules" {
-  default = {
-    AllowAll = {
-      start = "0.0.0.0"
-      end   = "255.255.255.255"
-    }
-  }
+  description = "PostgreSQL Administrator Password"
+  type        = string
+  sensitive   = true
 }
 
 variable "webapps" {
+  description = "Web App configurations"
+  type = map(object({
+    node_version = string
+    always_on    = bool
+    https_only   = bool
+  }))
   default = {
     api = {
       node_version = "20-lts"
-      always_on    = false
-      https_only   = false
+      # 2. Webアプリ・App Serviceの可用性改善: App Service の always_on を true に変更
+      always_on  = true
+      https_only = true
     }
     admin = {
       node_version = "20-lts"
-      always_on    = false
-      https_only   = false
+      # 2. Webアプリ・App Serviceの可用性改善: App Service の always_on を true に変更
+      always_on  = true
+      https_only = true
     }
   }
 }

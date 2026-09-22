@@ -1,5 +1,9 @@
 name: Terraform CI (quality gate)
 
+defaults:
+  run:
+    working-directory: azure
+
 on:
   pull_request:
   push:
