@@ -14,6 +14,7 @@
    - 該当変数に `sensitive = true` を付与し、外部（TF_VAR等）からの注入を前提とする作りに変更。
 4. **CIパイプライン（GitHub Actions）の強化**
    - `ci.yml` に Quality Gate を実装。従来の `fmt` に加え、`validate`、`tflint`（Lintチェック）、`tfsec`（セキュリティスキャン）の実行ステップを追加。
+   - `versions.tf` にてプロバイダーのバージョンを固定し、将来の破壊的変更による事故を防止
 
 ## Why：なぜ必要か（事故防止／運用／保守の観点）
 - **事故防止（セキュリティ）**: 
