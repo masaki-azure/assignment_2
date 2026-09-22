@@ -78,12 +78,18 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns_blob_link" {
 }
 
 resource "azurerm_storage_account" "st" {
-  name                     = "st${var.project}${var.env}001"
+  # storage account 名は小文字英数字のみ・24文字以内という Azure の制約があるため、
+  # project の表示用の値（大文字・ハイフン可）とは別に、名前生成専用の値を作る。
+  name                     = "st${local.storage_safe_project}${var.env}001"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
   min_tls_version          = "TLS1_2"
+
+  # アクセスキーでの認証を無効化し、Azure AD (RBAC) 認証のみを許可する。
+  # provider の storage_use_azuread と合わせて、Storage への認証経路を Azure AD に統一する。
+  shared_access_key_enabled = false
 
   # 1. ネットワーク・セキュリティの強化: ストレージアカウントのパブリックネットワークアクセスを無効化（または制限）。
   public_network_access_enabled = false

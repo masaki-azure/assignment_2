@@ -16,6 +16,11 @@
    - `ci.yml` に Quality Gate を実装。従来の `fmt` に加え、`validate`、`tflint`（Lintチェック）、`tfsec`（セキュリティスキャン）の実行ステップを追加。
    - `versions.tf` にてプロバイダーのバージョンを固定し、将来の破壊的変更による事故を防止
    - プロバイダー設定に `storage_use_azuread = true` を追加し、よりセキュアなAzure AD認証ベースの構成へ改善。
+5. **Storage account 命名バグの修正**
+   - `st${var.project}${var.env}001` は `project` のデフォルト値（`Health-App`）だと
+     大文字・ハイフンを含み、Azure の命名規則（小文字英数字のみ）に違反していた。
+   - `project` 自体は変更せず、Storage account 名の生成にのみ使うサニタイズ済みの
+     `local.storage_safe_project` を追加して解決。
 
 ## Why：なぜ必要か（事故防止／運用／保守の観点）
 - **事故防止（セキュリティ）**: 
@@ -32,6 +37,9 @@
   Terraformのコード内にはパスワード等のシークレットを一切持たせず、実行環境から渡す構造とした。
 - **CIによる自動検証**: 
   `ci.yml` にコード静的解析（tflint）とインフラ脆弱性スキャン（tfsec）を組み込み、PR作成・更新時に自動検証する仕組みを構築。
+- **命名バグは局所的に修正**:
+  `project` の値そのものを変えると他リソース名にも影響が及ぶため、Storage account の
+  名前生成ロジックだけを local で吸収し、影響範囲を最小限にとどめた。
 
 ## 再発防止：チームで守るルール、チェックの仕組み（CI等）
 今回実装したCI（Quality Gate）をベースに、以下の運用ルールを徹底する。
